@@ -20,6 +20,7 @@ forplot.R
 
 ## To use
 Clone this repository and extract into your computer maintaining the same file structure.
+
 ```https://github.com/lshtm-gis/PHSM-SI_package.git```
 
 Go into package directory and load the functions
