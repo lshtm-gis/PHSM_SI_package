@@ -35,6 +35,9 @@ dataprep <- function(x, country=NULL){
   # Select the variables required
   #
   data <- data %>%
+    filter(!targeted %in% c('news','transport'))
+  
+  data <- data %>%
     select(who_id, who_code, admin_level, date_start, measure_stage,targeted,enforcement,country_territory_area)
   #
   # Sort the data variable
@@ -43,5 +46,5 @@ dataprep <- function(x, country=NULL){
   #
   return(data)
 }
-#data_f <- dataprep('mistress_202103161.csv', 'Albania')
+#data_ff <- dataprep('/home/sewedo/Documents/lshtm/severity_index/1803/mistress_202103161.csv','France')
 #data_f <- dataprep('mistress_202103161.csv','Algeria')
