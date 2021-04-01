@@ -1,0 +1,32 @@
+{
+    "id": "A65B6747",
+    "path": null,
+    "project_path": null,
+    "type": "r_dataframe",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1617279453151.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "expression": "SI",
+        "caption": "SI",
+        "totalObservations": 104196,
+        "displayedObservations": 104196,
+        "variables": 9,
+        "cacheKey": "4815CE2D",
+        "object": "SI",
+        "environment": "",
+        "contentUrl": "grid_resource/gridviewer.html?env=&obj=SI&cache_key=4815CE2D&max_cols=50",
+        "preview": 0
+    },
+    "folds": "",
+    "lastKnownWriteTime": 94442302509848,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1617279453151,
+    "read_only": false,
+    "read_only_alternatives": []
+}

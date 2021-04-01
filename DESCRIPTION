@@ -1,0 +1,8 @@
+Package: phsmsevindex
+Title: Compute the PHSM severity index scores
+Version: 0.0.1.0
+Imports: tidyverse,
+    lubridate,
+    cowplot,
+    rlist
+RoxygenNote: 7.1.1
