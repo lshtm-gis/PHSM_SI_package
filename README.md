@@ -32,5 +32,7 @@ To compute the SI for all the countries
 SI <- forplot('mistress.csv')
 ```
 To compute the SI for singular country.
+```
 SI <- forplot('mistress.csv','France')
+```
 
