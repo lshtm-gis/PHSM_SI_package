@@ -13,7 +13,7 @@
 #'
 binaryindex <- function(x){
   #
-  # Assign '0' to admin_level not national or targeted = zones, else '1'.
+  # Assign '0' if admin_level is not national or targeted = zones, else assign '1'.
   #
   x$bin <- ifelse(!x$admin_level == 'national' | 
                      grepl('zones', tolower(x$targeted)), 

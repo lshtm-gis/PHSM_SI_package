@@ -90,7 +90,8 @@ ordschools <- function(x){
   #
   # Assign 0 as default for all 4.1.1 and 4.1.2
   #
-  x$ord <- ifelse(x$who_code %in% c('4.1.1','4.1.2'), 0,x$ord)
+  x$ord <- ifelse(x$who_code %in% c('4.1.1','4.1.2') &
+                    !x$measure_stage == 'finish',1,x$ord)
   #
   # Assign 4 if who_code = 4.1.2 and all schools or all education or all items in list of 
   # keyword is closed.
@@ -98,6 +99,8 @@ ordschools <- function(x){
   x$ord <- ifelse(x$who_code == '4.1.2' & 
                                 (x$shut %in% c('all education','all schools') |
                                 list.count(unique(x$shut)) == list.count(all_target3)), 4, x$ord)
+  x$ord <- ifelse(x$who_code == '4.1.2' & 
+                    x$targeted %in% c('all education','all schools'), 4, x$ord)
   #
   # Assign 1 if who_code = 4.1.1 and all schools or all education or all items in list of 
   # keyword is opened.
@@ -110,13 +113,15 @@ ordschools <- function(x){
   # some schools are closed but not all.
   #
   x$ord <-ifelse(x$who_code == '4.1.2' &  
+                   !x$measure_stage %in% c("phase-out","finish") &
                                !x$shut %in% c('all schools','all education'),3,x$ord)
   #
-  # Assign 3 if who_code = 4.1.1 and not all schools or all education are opened. i.e.
+  # Assign 2 if who_code = 4.1.1 and not all schools or all education are opened. i.e.
   # some schools are opened but not all.
   #
   x$ord <-ifelse(x$who_code == '4.1.1' &  
-                               !x$open %in% c('all schools','all education'),3,x$ord)
+                   !x$measure_stage %in% c("phase-out","finish") &
+                               !x$open %in% c('all schools','all education'),2,x$ord)
   #
   # Assign 1 if only post-secondary are closed
   #
@@ -150,10 +155,18 @@ ordschools <- function(x){
                     x$who_code == '4.1.2' &
                     x$who_code == lag(x$who_code,n=1L), lag(x$ord,n=1L),x$ord)
   #
+  #
+  # if measure stage is new, extension or modification, the score does not go down
+  x$ord <- ifelse(x$who_code %in% c('4.1.1', '4.1.2') & 
+                    x$measure_stage %in% c('new','modification','extension') &
+                    as.numeric(x$ord) != lag(as.numeric(x$ord)),
+                  lag(as.numeric(x$ord)),as.numeric(x$ord))
+  #
   # clean up
+  x <- replace_na(x, list(ord = 1))
   #
   x <- x %>% select(-c(shut,open,opened_left_shut,shut_left_opened,sch_all_shut, sch_all_open))
   #     
   return(x)
 }
-#data3 <- ordschools(data2)
+#adb <- ordschools(ac)

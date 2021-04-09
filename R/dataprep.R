@@ -40,7 +40,7 @@ dataprep <- function(x, country=NULL){
   data <- data %>%
     select(who_id, who_code, admin_level, date_start, measure_stage,targeted,enforcement,country_territory_area)
   #
-  # Sort the data variable
+  # Sort by date
   #
   data = data[order(as.Date(data$date_start, format="%Y-%m-%d")),]
   #

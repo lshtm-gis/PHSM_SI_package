@@ -13,16 +13,13 @@
 #'
 ordbusiness <- function(x){
   #
-  # ###########################################################
-  # Business coding not strictly following the 'defined logic document'
-  # But using combination of what is stated in the target variable, to
-  # identify businesses that are closed or opened.
-  ################################################################
   #
-  # Define a list of keywords in Businesses target variable which are of interest
+  # Define a list of keywords in Businesses which are of interest
   #
   all_target_b <- c('hospitality','entertainment','fitness','recreation','industry','retail','offices',
                     'beauty','tourism','religion','health','venues','non-essential businesses')
+  #
+  # A second list excluding 'non-essential businesses'
   #
   all_target_c <- c('hospitality','entertainment','fitness','recreation','industry','retail','offices',
                     'beauty','tourism','religion','health','venues')
@@ -116,47 +113,30 @@ ordbusiness <- function(x){
                     grepl('non-essential businesses', lag(tolower(x$targeted),n=5L)) |
                     grepl('non-essential businesses', lag(tolower(x$targeted),n=6L)) |
                     grepl('non-essential businesses', lag(tolower(x$targeted),n=7L))), 1,x$ord)
-                       #grepl('non-essential businesses', lag(tolower(x$targeted),n=1L)) |
-                       #grepl('non-essential businesses', lag(tolower(x$targeted),n=1L)) |
-                       #grepl('non-essential businesses', lag(tolower(x$targeted),n=1L)) |
-                       #grepl('non-essential businesses', lag(tolower(x$targeted),n=1L)), 1,x$ord))
-  
-                    #(lag(x$targeted, n=1L) %in% c('all businesses', 'non-essential businesses') |
-                    #lag(x$targeted, n=2L) %in% c('all businesses', 'non-essential businesses') |
-                    #lag(x$targeted, n=3L) %in% c('all businesses', 'non-essential businesses') |
-                    #lag(x$targeted, n=4L) %in% c('all businesses', 'non-essential businesses')),1, x$ord)
-                    #(!x$bus_shut %in% c('all businesses', 'non-essential businesses')), 2, x$ord)
   #
-  #grepl(paste(c('large'),collapse = "|"),
-  #tolower(x$targeted)) ,1,x$ord)
-#grepl('primary schools', tolower(x$targeted))
-  
-  # paste shut + opened but shut to get what is actually shut
+  # Adapting (i.e. 4.2.1) and phase out should be a 1
   #
-  #business$all_shut <- paste (business$shut,business$shut_left_opened, sep =',')
+  x$ord <- ifelse(x$who_code == '4.2.1' & 
+                    x$measure_stage %in% c("phase-out","finish"),1,x$ord)
   #
   #
-  # paste open + shut_left_opened to get what is actually open
+  # Closing (i.e. 4.2.2) and phase out should be a 1
   #
-  #business$all_open <- paste (business$open,business$opened_left_shut, sep =',')
+  x$ord <- ifelse(x$who_code == '4.2.2' & 
+                    x$measure_stage %in% c("phase-out","finish"),2,x$ord)
   #
+  # if measure stage is new, extension or modification, the score does not go down
   #
-  #business$all_shut[business$all_open == 'non-essential businesses'] <- ' '
+  x$ord <- ifelse(x$who_code %in% c('4.2.1','4.2.2') & 
+                    x$measure_stage %in% c('new','modification','extension') &
+                    x$ord < lag(x$ord),lag(x$ord),x$ord)
   #
-  # clean up
+  x <- replace_na(x, list(ord = 1))
+  #
+  # Clean up
   #
   x <- x %>%
     select(-c(opened_left_shut,shut_left_opened,bus_shut,bus_open))
   
   return(x)
 }
-#data4<- ordbusiness(data3)
-#data_business_a <- data_a %>%
-#  filter(who_code %in% c('4.2.1','4.2.2'))
-#
-#data_business_a= data_business_a[order(as.Date(data_business_a$date_start, format="%Y-%m-%d")),]
-
-
-#albania_business <- ordbusiness(data_business_a)
-
-#write.csv(albania_business, 'albania_business.csv', row.names = FALSE)

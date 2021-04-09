@@ -44,8 +44,8 @@ ordmove <- function(x){
   #
   x$ord <- ifelse(x$who_code == '4.5.2' & 
                                 x$enforcement %in% c('required','monitored') &
-                                !tolower(x$targeted) == 'partial curfew' & 
-                                tolower(x$targeted) %in% c('stay at home','full curfew'), 
+                                !grepl(paste(c('partial curfew'),collapse = "|"),tolower(x$targeted)) & 
+                    grepl(paste(c('stay at home','full curfew'),collapse = "|"),tolower(x$targeted)), 
                               4,x$ord)
   #
   # Assign 5 if who code is any of 4.5.2 and enforcement is required or monitored and
@@ -53,17 +53,17 @@ ordmove <- function(x){
   #
   x$ord <- ifelse(x$who_code == '4.5.2' & 
                                 x$enforcement %in% c('required','monitored') &
-                                tolower(x$targeted) == 'weekend curfew' | 
-                                (tolower(x$targeted) == 'partial curfew' &
-                                tolower(x$targeted) == 'stay at home') |
-                                tolower(x$targeted) %in% c('full curfew','partial curfew'), 
-                              5,x$ord)
+                    (gsub(",.*$", "", x$targeted) == 'weekend curfew' | (gsub(",.*$", "", x$targeted) == 'partial curfew' & grepl(paste(c('stay at home'),collapse = "|"),tolower(x$targeted)))) |
+                    (gsub(",.*$", "", x$targeted) == 'full curfew' | grepl(paste(c('partial curfew'),collapse = "|"),tolower(x$targeted))), 5 ,x$ord)
+
+  #
+  # if measure stage is new, extension or modification, the score does not go down
+  x$ord <- ifelse(x$who_code %in% c('4.5.1','4.5.3','4.5.2','4.5.4') & 
+                    x$measure_stage %in% c('new','modification','extension') &
+                    x$ord < lag(x$ord),lag(x$ord),x$ord)
+  #
+  x <- replace_na(x, list(ord = 1))
+  #
   #
   return(x)
 }
-#data6 <- ordmove(data5)
-#data_move_a <- data %>%
-#  filter(who_code %in% c('4.5.1','4.5.3','4.5.2','4.5.4'))
-#albania_move <- ordmove(data_move_a)
-
-#write.csv(albania_move, 'albania_move.csv', row.names = FALSE)

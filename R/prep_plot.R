@@ -83,7 +83,7 @@ prep_plot <- function(x,country){
   #
   # global index = average score for all categories
   #
-  y$global_index <- round(rowMeans(y[,3:8]))
+  y$global_index <- round(rowMeans(y[,c('Mask','Travel','Gathering','School','Business','Movement')], na.rm=TRUE))
   
   y <- y %>%
     select(date_start, country_territory_area, global_index, Mask, School,
